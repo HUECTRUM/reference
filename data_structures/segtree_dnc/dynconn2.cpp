@@ -291,11 +291,11 @@ struct DynConn {
 };
 
 vector<addEdges> toAddEdges(vpii &edges, vvpii &times, int m) {
-vector<addEdges> events;
-rep(i, edges.size()) rep(j, times[i].size()) {
-events.push_back({edges[i].first, edges[i].second, times[i][j].first, times[i][j].second});
-}
-return events;
+    vector<addEdges> events;
+    rep(i, edges.size()) rep(j, times[i].size()) {
+        events.push_back({edges[i].first, edges[i].second, times[i][j].first, times[i][j].second});
+    }
+    return events;
 }
 
 signed main() {
