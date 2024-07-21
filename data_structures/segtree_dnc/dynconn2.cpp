@@ -1,6 +1,6 @@
 //
-// V1 - https://codeforces.com/gym/100551/problem/A
-// query - comp count
+// V1 - https://codeforces.com/gym/100551/problem/A, https://codeforces.com/gym/100551/problem/E
+// query - comp count, init via events/edge time ranges
 //
 
 #include <iostream>
@@ -181,6 +181,7 @@ typedef tree<ll, null_type, less<>, rb_tree_tag, tree_order_statistics_node_upda
 //////////////////////////////////////////////////////////////////////////
 
 struct event { int type, a, b, t; };
+struct addEdges {int a, b, l, r; };
 struct DynConn {
     int n, q;
     vvpii stree;
@@ -268,6 +269,18 @@ struct DynConn {
         init(n, q, events, queryFilter);
     }
 
+    void init(int n, int q, vector<addEdges> edges, vi queryFilter) {
+        this->n = n, this->q = q; this->queryFilter = queryFilter;
+        initDsu(n); stree = vvpii(4 * q); answers = vi(q);
+        for (auto &[a, b, l, r]: edges) add(l, r, a, b);
+    }
+
+    void init(int n, int q, vector<addEdges> edges) {
+        vi queryFilter(q);
+        iota(queryFilter.begin(), queryFilter.end(), 0);
+        init(n, q, edges, queryFilter);
+    }
+
     void run() { dfs(); }
 
     vi getResults() {
@@ -277,9 +290,52 @@ struct DynConn {
     }
 };
 
-
+vector<addEdges> toAddEdges(vpii &edges, vvpii &times, int m) {
+vector<addEdges> events;
+rep(i, edges.size()) rep(j, times[i].size()) {
+events.push_back({edges[i].first, edges[i].second, times[i][j].first, times[i][j].second});
+}
+return events;
+}
 
 signed main() {
+    ifstream cin("disconnected.in"); ofstream cout("disconnected.out");
+    IO;
+
+    int n, m; cin >> n >> m;
+    vpii edges(m);
+    rep(i, m) {
+        int a, b; cin >> a >> b; --a, --b;
+        edges[i] = {a, b};
+    }
+
+    int k; cin >> k;
+    vvpii times(m);
+    rep(i, m) times[i].push_back({0, k});
+
+    reps(i, 1, k + 1) {
+        int sz; cin >> sz;
+        rep(j, sz) {
+            int x; cin >> x; --x;
+            auto [l, r] = times[x].back(); times[x].pop_back();
+            times[x].push_back({l, i - 1}); times[x].push_back({i + 1, k});
+        }
+    }
+
+    vector<addEdges> aE = toAddEdges(edges, times, m);
+
+    DynConn dc = DynConn();
+    dc.init(n, k + 1, aE);
+    dc.run();
+    vi ans = dc.getResults();
+
+    reps(i, 1, k + 1) {
+        if (ans[i] > 1) cout << "Disconnected" << endl;
+        else cout << "Connected" << endl;
+    }
+}
+
+signed main2() {
     ifstream cin("connect.in"); ofstream cout("connect.out");
     IO;
 
