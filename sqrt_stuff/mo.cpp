@@ -1,3 +1,8 @@
+//
+// https://cses.fi/problemset/task/1734/
+// query - distinct values
+//
+
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -196,7 +201,93 @@ int popcnt(long long i) { return __builtin_popcountll(i); }
 //////////////////////////////////////////////////////////////////////////
 
 
+const int MAXN = 200010;
+
+struct query { int l, r, id; };
+struct MO {
+    vector<query> queries;
+    vi ans, v;
+    int n, q;
+
+    vi freq = vi(MAXN);
+    int uCnt = 0;
+
+    void init(vector<query> &qu, vi &arr, int BLOCKSZ = 450) {
+        queries = qu, v = arr; ans = vi(qu.size());
+        std::sort(queries.begin(), queries.end(), [&](query &q1, query &q2) {
+            return make_pair(q1.l / BLOCKSZ, q1.r) < make_pair(q2.l / BLOCKSZ, q2.r);
+        });
+        q = qu.size(), n = v.size();
+    }
+
+    void add(int idx) {
+        if (!freq[v[idx]]) ++uCnt;
+        freq[v[idx]]++;
+    }
+
+    void remove(int idx) {
+        freq[v[idx]]--;
+        if (!freq[v[idx]]) --uCnt;
+    }
+
+    int getAns() { return uCnt; }
+
+    void run() {
+        int curL = 0, curR = -1, uCnt = 0;
+
+        rep(i, q) {
+            auto qu = queries[i];
+            while (curL > qu.l) {
+                curL--;
+                add(curL);
+            }
+            while (curR < qu.r) {
+                curR++;
+                add(curR);
+            }
+            while (curL < qu.l) {
+                remove(curL);
+                curL++;
+            }
+            while (curR > qu.r) {
+                remove(curR);
+                curR--;
+            }
+            ans[qu.id] = getAns();
+        }
+    }
+
+    vi getResults() { return ans; }
+};
+
+
+void compress(vi &v, int n) {
+    vector<int> d = v;
+    sort(d.begin(), d.end());
+    d.resize(unique(d.begin(), d.end()) - d.begin());
+    for (int i = 0; i < n; ++i) v[i] = lower_bound(d.begin(), d.end(), v[i]) - d.begin();
+}
+
 
 signed main() {
     IO;
+
+    int n, q; cin >> n >> q;
+    vi v(n);
+    rep(i, n) cin >> v[i];
+    compress(v, n);
+
+    vector<query> queries(q);
+    int a, b;
+    rep(i, q) {
+        cin >> a >> b; --a, --b;
+        queries[i] = {a, b, i};
+    }
+
+    MO mo = MO();
+    mo.init(queries, v);
+    mo.run();
+    vi ans = mo.getResults();
+
+    rep(i, q) cout << ans[i] << "\n";
 }
