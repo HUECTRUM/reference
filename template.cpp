@@ -1,31 +1,5 @@
-#include <iostream>
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <map>
-#include <unordered_set>
-#include <iostream>
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <map>
-#include <unordered_set>
-#include <unordered_map>
-#include <queue>
-#include <set>
-#include <stack>
-#include <fstream>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-#include <bitset>
-#include <sstream>
-#include <ext/rope>
-#include <ctime>
-#include <random>
-#include <cstdlib>
-#include <complex>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -65,6 +39,7 @@ using namespace __gnu_cxx;
 #define repe2(x, a, y) for (auto &[x,a]: y)
 
 #define pb push_back
+#define eb emplace_back
 
 
 const ll mod = 1000000007;
@@ -117,7 +92,17 @@ struct ModInt {
         return x %= y;
     }
 
-    ModInt binpow(const ModInt &y, ll pow) const {
+    ModInt binpow(ll pow) const {
+        pow %= mod - 1;
+        ModInt res = 1, a = *this;
+        while (pow) {
+            if (pow & 1) res *= a;
+            a *= a, pow >>= 1;
+        }
+        return res;
+    }
+
+    ModInt binpow1(const ModInt &y, ll pow) const {
         pow %= mod - 1;
         ModInt res = 1, a = y;
         while (pow) {
@@ -127,7 +112,7 @@ struct ModInt {
         return res;
     }
 
-    ModInt inv() const { return binpow(*this, mod - 2); }
+    ModInt inv() const { return binpow1(*this, mod - 2); }
 
     ModInt &operator/=(const ModInt &y) {
         p = (p * y.inv().p) % mod;
@@ -193,10 +178,13 @@ vi dx = {0,0,-1,1}, dy = {-1,1,0,0};
 int popcnt(int i) { return __builtin_popcountll(i); }
 int popcnt(long long i) { return __builtin_popcountll(i); }
 
-//////////////////////////////////////////////////////////////////////////
+template<typename T>inline void chmax(T &a,T b){a=max(a,b);}
+template<typename T>inline void chmin(T &a,T b){a=min(a,b);}
 
+//////////////////////////////////////////////////////////////////////////
 
 
 signed main() {
     IO;
+
 }
