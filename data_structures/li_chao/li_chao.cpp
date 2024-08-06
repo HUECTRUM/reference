@@ -216,7 +216,7 @@ struct LiChaoMin {
 };
 
 struct LiChaoMax {
-    vpll stree = vpll(4 * MAXN, {0, INF});
+    vpll stree = vpll(4 * MAXN, {0, -INF});
 
     ll eval(pll line, ll x) { return line.first * x + line.second; }
 
