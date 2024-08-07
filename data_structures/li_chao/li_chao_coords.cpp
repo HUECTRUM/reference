@@ -216,6 +216,8 @@ struct LiChaoMin {
 
     ll query(ll x) { return query(x, 1, 0, n); }
 
+    ll queryUncompr(ll x) { return query(getVectorCompressed(x, coords)); }
+
     void insert(pll line, int v, ll tl, ll tr) {
         ll tm = (tl + tr) >> 1;
         bool evalL = eval(line, tl) < eval(stree[v], tl), evalM = eval(line, tm) < eval(stree[v], tm);
@@ -248,6 +250,8 @@ struct LiChaoMax {
     }
 
     ll query(ll x) { return query(x, 1, 0, n); }
+
+    ll queryUncompr(ll x) { return query(getVectorCompressed(x, coords)); }
 
     void insert(pll line, int v, ll tl, ll tr) {
         ll tm = (tl + tr) >> 1;
