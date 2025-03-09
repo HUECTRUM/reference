@@ -73,12 +73,7 @@ int popcnt(long long i) { return __builtin_popcountll(i); }
 template<typename T>inline void chmax(T &a,T b){a=max(a,b);}
 template<typename T>inline void chmin(T &a,T b){a=min(a,b);}
 
-void vectorCoordinateCompression(vll &v) {
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());
-}
 
-int getVectorCompressed(ll val, vll &v) { return lower_bound(v.begin(), v.end(), val) - v.begin(); }
 
 ll ndivto(ll n, ll k) { return n / k; }
 ll ndivfrom(ll n, ll k) { return ndivto(n, k + 1) + 1; }
@@ -90,7 +85,6 @@ typedef tree<ll, null_type, less_equal<>, rb_tree_tag, tree_order_statistics_nod
 #define int long long int
 #define Mint modint998244353
 #define vmint vector<modint998244353>
-
 
 const int MAXN = 200010;
 
@@ -127,31 +121,57 @@ node* upd(node* prev, int pos, int val, int tl, int tr) {
     else return new node(prev->l, upd(prev->r, pos, val, tm + 1, tr));
 }
 
-vector<node*> roots(MAXN + 1);
+struct DQuery {
+    static void vectorCoordinateCompression(vector<int> &v) {
+        std::sort(v.begin(), v.end());
+        v.erase(std::unique(v.begin(), v.end()), v.end());
+    }
+
+    static int getVectorCompressed(int val, vector<int> &v) { return lower_bound(v.begin(), v.end(), val) - v.begin(); }
+
+    vector<node*> roots;
+    int n;
+
+    DQuery(vector<int> vv, bool compress = false): n(vv.size()) {
+        if (compress) {
+            vector<int> coords = vv;
+            vectorCoordinateCompression(coords);
+
+            for (int &i: vv) i = getVectorCompressed(i, coords);
+        }
+
+        vector<int> last(n, -1);
+
+        roots = vector<node*>(n + 1);
+        roots[0] = build(0, n - 1);
+        for (int i = 0; i < n; ++i) {
+            if (last[vv[i]] != -1) {
+                roots[i + 1] = upd(roots[i], last[vv[i]], -1, 0, n - 1);
+                roots[i + 1] = upd(roots[i + 1], i, 1, 0, n - 1);
+            } else roots[i + 1] = upd(roots[i], i, 1, 0, n - 1);
+
+            last[vv[i]] = i;
+        }
+    }
+
+    int query(int l, int r) {
+        return sumQuery(roots[r + 1], l, r, 0, n - 1);
+    }
+};
 
 signed main() {
     IO;
 
     int n; cin >> n;
-    vi v(n + 1), last(1e6 + 10); reps(i, 1, n + 1) cin >> v[i];
+    vi v(n); rep(i, n) cin >> v[i];
 
 
-    roots[0] = build(0, n - 1);
-    reps(i, 1, n + 1) {
-        if (last[v[i]]) {
-            roots[i] = upd(roots[i - 1], last[v[i]], -1, 1, n);
-            roots[i] = upd(roots[i], i, 1, 1, n);
-        } else {
-            roots[i] = upd(roots[i - 1], i, 1, 1, n);
-        }
-
-        last[v[i]] = i;
-    }
+    DQuery dq(v, true);
 
     int q; cin >> q;
     rep(i, q) {
-        int l, r; cin >> l >> r;
-        int res = sumQuery(roots[r], l, r, 1, n);
-        cout << res << "\n";
+        int l, r; cin >> l >> r; --l, --r;
+
+        cout << dq.query(l, r) << "\n";
     }
 }
