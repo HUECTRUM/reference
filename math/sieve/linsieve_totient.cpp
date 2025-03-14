@@ -1157,62 +1157,39 @@ ll ndivtoCeil(ll n, ll k) { return ndivfromCeil(n, k - 1) - 1; }
 #define Mint modint1000000007
 #define vmint vector<modint1000000007>
 
-//Optimal point for F(n^a), G(n^b): k=n^[(1-b)/(2-a-b)]
-//Precomp prf up to t = n^[1/(2-a)]
-//Sum of H(i) over all n/k is O(n^(2/3)) given constant F and G for n/k.
-template <class S, auto f, auto g, auto F, auto G> struct Hyperbola {
-    static_assert(std::is_convertible_v<decltype(f), std::function<S(int)>>,
-    "f must work as S(int)");
-    static_assert(std::is_convertible_v<decltype(g), std::function<S(int)>>,
-    "g must work as S(int)");
-    static_assert(std::is_convertible_v<decltype(F), std::function<S(int)>>,
-    "F must work as S(int)");
-    static_assert(std::is_convertible_v<decltype(G), std::function<S(int)>>,
-    "G must work as S(int)");
+const int MAXN = 1e6 + 10;
+vector<int> primes;
+bool is_composite[MAXN];
+int phi[MAXN];
 
-    S calculate_sqrt(int n) {
-        S ans = 0;
-        int i = 1;
-        for (;i * i <= n; ++i) {
-            ans += f(i) * G(n / i);
-            ans += g(i) * F(n / i);
+void sieve(int n = MAXN) {
+    fill(is_composite, is_composite + n, false);
+    phi[1] = 1;
+    for (int i = 2; i < n; ++i) {
+        if (!is_composite[i]) primes.push_back(i), phi[i] = i - 1;
+
+        for (int j = 0; j < primes.size () && i * primes[j] < n; ++j) {
+            is_composite[i * primes[j]] = true;
+
+            if (i % primes[j] == 0) { //p[j] divides i
+                phi[i * primes[j]] = phi[i] * primes[j];
+                break;
+            } else { //p[j] does not divide i
+                phi[i * primes[j]] = phi[i] * phi[primes[j]];
+            }
         }
-        --i;
-        ans -= F(i) * G(i);
-        return ans;
     }
-
-    S calculate(int n, int k, int l) {
-        //(k, l) is on the convex hull
-        assert((k * l <= n) && ((k + 1) * (l + 1) > n));
-
-        S ans = 0;
-        for (int i = 1; i <= k; ++i) ans += f(i) * G(n / i);
-        for (int i = 1; i <= l; ++i) ans += g(i) * F(n / i);
-        ans -= F(k) * G(l);
-        return ans;
-    }
-
-    S calculate_limit(int n, int k) {
-        return calculate(n, k, n / k);
-    }
-};
-
-Mint f(int x) {return 1;}
-Mint F(int x) {return x;}
-Mint g(int x) {return x;}
-Mint G(int x) {
-    Mint t = x;
-    return t*(t+1)/(Mint)2;
 }
 
 
 signed main() {
     IO;
 
-    int n; cin >> n;
-    int x = sqrt(n);
-    int lim = max(x - 2, 1ll);
-    Hyperbola<Mint, f, g, F, G> hyp;
-    cout << hyp.calculate_limit(n, lim);
+    sieve();
+
+    int t; cin >> t;
+    while (t--) {
+        int n; cin >> n;
+        cout << phi[n] << "\n";
+    }
 }
