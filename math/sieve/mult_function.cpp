@@ -68,7 +68,7 @@ void sieve(int n = MAXN) {
                 int div = i / primePowers[j][cnt[i]];
                 if (div == 1) {
                     int k = cnt[i] + 1, pk = primePowers[j][k];
-                    //!f(p^k)
+                    //f(p^k)
                     func[i * primes[j]] = (pk * primes[j] - 1) / (primes[j] - 1);
                 } else {
                     func[i * primes[j]] = func[i / primePowers[j][cnt[i]]] * func[primePowers[j][cnt[i]] * primes[j]];
