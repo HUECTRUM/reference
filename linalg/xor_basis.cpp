@@ -1165,6 +1165,8 @@ template <int N = 20> struct XorBasis {
 
     XorBasis() { fill(basis, basis + N, 0); }
 
+    void reset() { fill(basis, basis + N, 0); }
+
     void addToBasis(int i, int mask) {
         basis[i] = mask;
         ++sz;
