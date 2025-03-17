@@ -1172,20 +1172,27 @@ template <int N = 20> struct XorBasis {
         ++sz;
     }
 
-    void add(int mask) {
+    bool add(int mask) {
         if (max) {
             for (int i = N - 1; i >= 0; --i) {
                 if (!(mask & (1 << i))) continue;
-                if (!basis[i]) return void(addToBasis(i, mask));
+                if (!basis[i]) {
+                    addToBasis(i, mask);
+                    return true;
+                }
                 mask ^= basis[i];
             }
         } else {
             for (int i = 0; i < N; ++i) {
                 if (!(mask & (1 << i))) continue;
-                if (!basis[i]) return void(addToBasis(i, mask));
+                if (!basis[i]) {
+                    addToBasis(i, mask);
+                    return true;
+                }
                 mask ^= basis[i];
             }
         }
+        return false;
     }
 
     bool has(int mask) {
