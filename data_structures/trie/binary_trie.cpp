@@ -240,6 +240,18 @@ struct XorTrie {
         if (addEqual) ans += cnt[curV];
         return ans;
     }
+
+    int findMax(int xorWith) {
+        int curV = 1, ans = 0;
+
+        reprv(i, BITS) {
+            int bit = (xorWith >> i) & 1;
+
+            if (go[curV][1 - bit]) ans += (1 << i), curV = go[curV][1 - bit];
+            else curV = go[curV][bit];
+        }
+        return ans;
+    }
 };
 
 XorTrie xtr;
