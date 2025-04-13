@@ -208,10 +208,19 @@ template<typename T> struct SquareMatrix {
 
     SquareMatrix operator *(SquareMatrix const& b) const {
         assert(n == b.n);
-        SquareMatrix res(n, vct<vct<T>>(n, vct<T>(n)));
+        SquareMatrix res(n, vector<vector<T>>(n, vector<T>(n)));
         rep(i, n) rep(k, n) rep(j, n) res(i, j) += (*this)(i, k) * b(k, j);
         return res;
     }
+
+    SquareMatrix operator +(SquareMatrix const &b) const {
+        assert(n == b.n);
+        SquareMatrix res(n, vct<vector<T>>(n, vector<T>(n)));
+        rep(i, n) rep(j, n) res(i, j) += (*this)(i, j) + b(i, j);
+        return res;
+    }
+
+    SquareMatrix& operator+=(SquareMatrix const& t) {return *this = *this + t;}
 
     SquareMatrix one(int ssz) {
         SquareMatrix res(ssz);
@@ -219,13 +228,40 @@ template<typename T> struct SquareMatrix {
         return res;
     }
 
+    SquareMatrix zero(int ssz) {
+        return SquareMatrix(ssz);
+    }
+
     SquareMatrix binpow(int pw) {
-        SquareMatrix res = one(this->n), a = *this;
+        SquareMatrix res = one(n), a = *this;
         while (pw) {
             if (pw & 1) res *= a;
             a *= a, pw >>= 1;
         }
         return res;
+    }
+
+    SquareMatrix binpowSum(int pw) {
+        SquareMatrix resPow = one(n), resSum = zero(n), curPow = *this, curSum = one(n);
+
+        while (pw) {
+            if (pw & 1) resSum += resPow * curSum, resPow *= curPow;
+            curSum *= one(n) + curPow, curPow *= curPow, pw >>= 1;
+        }
+        return resSum;
+    }
+
+    vector<T> vectorMul(vector<T> vec) {
+        vector<T> result(n);
+        for (int i = 0; i < n; ++i) for(int j = 0; j < n; ++j) result[i] += mtr[i][j] * vec[j];
+        return result;
+    }
+
+    void print() {
+        for (int i = 0; i < n; ++i) {
+            for(int j = 0; j < n; ++j) cout << mtr[i][j] << " ";
+            cout << endl;
+        }
     }
 };
 
