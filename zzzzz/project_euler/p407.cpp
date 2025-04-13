@@ -659,15 +659,15 @@ int mod_inv(int a, int m) {
 struct Congruence { int a, m; };
 
 int crt(vector<Congruence> const& congs) {
-int M = 1, ans = 0;
-for (auto const& c : congs) M *= c.m;
+    int M = 1, ans = 0;
+    for (auto const& c : congs) M *= c.m;
 
-for (auto const& c : congs) {
-auto [a_i, m_curr] = c;
-int M_i = M / m_curr, N_i = mod_inv(M_i, m_curr);
-ans = (ans + a_i * M_i % M * N_i) % M;
-}
-return ans;
+    for (auto const& c : congs) {
+        auto [a_i, m_curr] = c;
+        int M_i = M / m_curr, N_i = mod_inv(M_i, m_curr);
+        ans = (ans + a_i * M_i % M * N_i) % M;
+    }
+    return ans;
 }
 
 vector<int> factorize(int n) {
