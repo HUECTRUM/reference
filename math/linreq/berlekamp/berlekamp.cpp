@@ -910,15 +910,3 @@ template<typename T> vector<T> predict(const vector<T> &values, const vector<int
     for (int i = 0; i < evalAt.size(); ++i) ans[i] = lrs.calcTerm(evalAt[i]);
     return ans;
 }
-
-
-signed main() {
-    IO;
-
-    vmint naive = {1,1,2,4,6,9,14,21};
-    int n; cin >> n;
-    mint ansx = predict(naive, {n - 1})[0];
-    int ansy = ansx.val();
-    if (n == 55) ansy += ansx.mod();
-    cout << ansy;
-}

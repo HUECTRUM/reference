@@ -69,17 +69,3 @@ template <typename T> struct LinrecSolver {
         return ans;
     }
 };
-
-
-
-signed main() {
-    LinrecSolver<int> fib(2, {0, 1}, {1, 1});
-    cout << fib.calcTerm(19) << endl;
-
-    LinrecSolver<int> fibShifted(2, {8, 11}, {1, 1});
-    cout << fibShifted.calcTerm(4) << endl;
-
-    //f_(i+3) = 2f_(i+2) - f_(i+1) - f(i), f_0 = -1, f_1 = 2, f_2 = 5
-    LinrecSolver<int> p3(3, {-1, 2, 5}, {-1, -1, 2});
-    cout << p3.calcTerm(6) << endl;
-}
