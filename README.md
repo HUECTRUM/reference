@@ -1,0 +1,1 @@
+A collection of poor implementations of some algorithms that might or might not be interesting

@@ -268,13 +268,5 @@ template<typename T> struct SquareMatrix {
 signed main() {
     IO;
 
-    int n, k; cin >> n >> k;
-    SquareMatrix<Mint> a(n);
-    rep(i, n) rep(j, n) cin >> a(i, j);
-
-    SquareMatrix<Mint> res = a.binpow(k);
-    rep(i, n) {
-        rep(j, n) cout << res(i, j) << " ";
-        cout << "\n";
-    }
+    
 }
