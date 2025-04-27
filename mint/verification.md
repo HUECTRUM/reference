@@ -1,0 +1,1 @@
+Full copy-paste of Atcoder modint implementation
