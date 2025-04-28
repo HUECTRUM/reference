@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define int long long int
+
 struct VirtualTree {
     int n, grvCnt = 0, timer = 0, LOG = 20;
     vector<int> tin, tout, dpth, subtreeSz, grv;
@@ -70,3 +72,43 @@ struct VirtualTree {
     }
 };
 
+
+
+vector<int> subtreeSz;
+int slvTree(VirtualTree &vtr, int v, int p = -1) {
+    int vAns = 0;
+
+    subtreeSz[v] = vtr.grv[v];
+    for (auto &to: vtr.virTr[v]) if (to != p) {
+            vAns += slvTree(vtr, to, v);
+            subtreeSz[v] += subtreeSz[to];
+        }
+    if (p != -1) {
+        int len = vtr.dpth[v] - vtr.dpth[p];
+        vAns += len * subtreeSz[v] * (vtr.grvCnt - subtreeSz[v]);
+    }
+    return vAns;
+}
+
+signed main() {
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+    int a, b, n; cin >> n;
+
+    vector<vector<int>> g(n), groups(n);
+    subtreeSz = vector<int>(n);
+    for (int i = 1; i < n; ++i) {
+        cin >> a >> b; --a, --b;
+        g[a].push_back(b), g[b].push_back(a);
+    }
+    for (int i = 0; i < n; ++i) cin >> a, groups[a - 1].push_back(i);
+
+    int ans = 0;
+    VirtualTree vtr(g);
+    for (int i = 0; i < n; ++i) if (groups[i].size()) {
+            auto [root, allVs] = vtr.buildTree(groups[i]);
+            ans += slvTree(vtr, root);
+            vtr.cleanup(allVs, groups[i]);
+        }
+    cout << ans;
+}
