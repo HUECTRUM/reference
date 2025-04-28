@@ -74,3 +74,29 @@ struct BridgesDSU {
         par[a] = dsu_cc[a] = b, size_cc[cb] += size_cc[a];
     }
 };
+
+
+signed main() {
+    ifstream cin("bridges.in"); ofstream cout("bridges.out");
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+    int n, m; cin >> n >> m;
+
+    BridgesDSU ds = BridgesDSU();
+    ds.init(n);
+
+    int a, b;
+    for (int i = 0; i < m; ++i) {
+        cin >> a >> b; --a, --b;
+        ds.addEdge(a, b);
+    }
+
+    int k; cin >> k;
+    vector<int> ans;
+    for (int i = 0; i < k; ++i) {
+        cin >> a >> b; --a, --b;
+        ds.addEdge(a, b);
+        ans.push_back(ds.bridges);
+    }
+
+    for (int i = 0; i < (int) ans.size(); ++i) cout << ans[i] << "\n";
+}
