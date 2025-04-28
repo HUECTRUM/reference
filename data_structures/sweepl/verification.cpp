@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define int long long int
 struct event { int x, y1, y2, type; };
 struct coords { int x1, y1, x2, y2; };
 
@@ -71,3 +72,15 @@ template<int MAXN = 2097152, int INF = 1000000000000000000> struct RectArea {
 
 
 
+
+
+
+signed main() {
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+    int n; cin >> n;
+    vector<coords> coords(n);
+    for (int i = 0; i < n; ++i) cin >> coords[i].x1 >> coords[i].y1 >> coords[i].x2 >> coords[i].y2;
+
+    RectArea ra(coords);
+    cout << ra.run();
+}

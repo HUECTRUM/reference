@@ -1,199 +1,22 @@
-//
-// V1 - https://codeforces.com/gym/100551/problem/A, https://codeforces.com/gym/100551/problem/E
-// query - comp count, init via events/edge time ranges
-//
-
-#include <iostream>
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <map>
-#include <unordered_set>
-#include <iostream>
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include <numeric>
-#include <map>
-#include <unordered_set>
-#include <unordered_map>
-#include <queue>
-#include <set>
-#include <stack>
-#include <fstream>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <bitset>
-#include <sstream>
-#include <ext/rope>
-#include <ctime>
-#include <random>
-#include <cstdlib>
-#include <complex>
 #include <bits/stdc++.h>
-
 using namespace std;
-using namespace __gnu_pbds;
-using namespace __gnu_cxx;
 
-/* clang-format off */
-
-/* TYPES  */
-#define ll long long
-#define pii pair<int, int>
-#define pll pair<long long, long long>
-#define vi vector<int>
-#define vll vector<long long>
-#define vpii vector<pair<int, int>>
-#define vpii vector<pair<int, int>>
-#define vvpii vector<vector<pair<int, int>>>
-#define vpll vector<pair<long long, long long>>
-#define vvpll vector<vector<pair<long long, long long>>>
-#define vvi vector<vector<int>>
-#define vvll vector<vector<long long>>
-#define mii map<int, int>
-#define si set<int>
-#define sc set<char>
-#define vd vector<double>
-#define vvd vector<vector<double>>
-
-
-/* FUNCTIONS */
-#define feach(el, v) for(auto &el: v)
-#define rep(i, n) for(int i=0;i<n;i++)
-#define reprv(i, n) for(int i=n-1;i>=0;i--)
-#define reps(i, s, e) for(int i=s;i<e;i++)
-#define reprve(i, e, s) for(int i=e-1;i>=s;i--)
-#define repe(x, y) for (auto &x: y)
-#define repe2(x, a, y) for (auto &[x,a]: y)
-
-
-
-const ll mod = 1000000007;
-
-template<ll mod = 1000000007>
-struct ModInt {
-    ll p;
-
-    ModInt() : p(0) {}
-
-    ModInt(ll x) { p = x >= 0 ? x % mod : x + (-x + mod - 1) / mod * mod; }
-
-    ModInt &operator+=(const ModInt &y) {
-        p = p + *y - ((p + *y) >= mod ? mod : 0);
-        return *this;
-    }
-
-    ModInt &operator-=(const ModInt &y) {
-        p = p - *y + (p - *y < 0 ? mod : 0);
-        return *this;
-    }
-
-    ModInt &operator*=(const ModInt &y) {
-        p = (p * *y) % mod;
-        return *this;
-    }
-
-    ModInt &operator%=(const ModInt &y) {
-        if (y)p %= *y;
-        return *this;
-    }
-
-    ModInt operator+(const ModInt &y) const {
-        ModInt x = *this;
-        return x += y;
-    }
-
-    ModInt operator-(const ModInt &y) const {
-        ModInt x = *this;
-        return x -= y;
-    }
-
-    ModInt operator*(const ModInt &y) const {
-        ModInt x = *this;
-        return x *= y;
-    }
-
-    ModInt operator%(const ModInt &y) const {
-        ModInt x = *this;
-        return x %= y;
-    }
-
-    ModInt binpow(const ModInt &y, ll pow) const {
-        pow %= mod - 1;
-        ModInt res = 1, a = y;
-        while (pow) {
-            if (pow & 1) res *= a;
-            a *= a, pow >>= 1;
-        }
-        return res;
-    }
-
-    ModInt inv() const { return binpow(*this, mod - 2); }
-
-    ModInt &operator/=(const ModInt &y) {
-        p = (p * y.inv().p) % mod;
-        return *this;
-    }
-
-    ModInt operator/(const ModInt &y) const {
-        ModInt x = *this;
-        return x /= y;
-    }
-
-    friend istream &operator>>(istream &is, ModInt &a) {
-        int v;
-        is >> v;
-        a = ModInt(v);
-        return is;
-    }
-
-    friend ostream &operator<<(ostream &os, const ModInt &a) { return os << a.p; }
-
-    ModInt &operator++() {
-        p = (p + 1) % mod;
-        return *this;
-    }
-
-    ModInt &operator--() {
-        p = (p - 1 + mod) % mod;
-        return *this;
-    }
-
-    bool operator==(const ModInt &y) const { return p == *y; }
-
-    bool operator!=(const ModInt &y) const { return p != *y; }
-
-    const ll &operator*() const { return p; }
-
-    ll &operator*() { return p; }
-
-};
-
-using Mint = ModInt<>;
-#define vmint vector<Mint>
-#define vvmint vector<vector<Mint>>
-typedef tree<ll, null_type, less<>, rb_tree_tag, tree_order_statistics_node_update> oSet;
-#define IO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#pragma GCC target("popcnt")
 #define int long long int
-//////////////////////////////////////////////////////////////////////////
 
 struct event { int type, a, b, t; };
 struct addEdges {int a, b, l, r; };
 struct DynConn {
     int n, q;
-    vvpii stree;
-    vi par, sz, queryFilter;
-    stack<pii> updates;
-    vi answers;
+    vector<vector<pair<int, int>>> stree;
+    vector<int> par, sz, queryFilter;
+    stack<pair<int, int>> updates;
+    vector<int> answers;
     int comps;
 
     int getAnswer() { return comps; }
 
     void initDsu(int cnt) {
-        par = sz = vi(n, 1); comps = cnt;
+        par = sz = vector<int>(n, 1); comps = cnt;
         iota(par.begin(), par.end(), 0);
     }
 
@@ -238,17 +61,17 @@ struct DynConn {
             dfs(v << 1, tl, tm); dfs(v << 1 | 1, tm + 1, tr);
         }
 
-        rep(i, updA) rollback();
+        for (int i = 0; i < updA; ++i) rollback();
     }
 
     void dfs() { dfs(1, 0, q - 1); }
 
-    void init(int n, int q, vector<event> events, vi queryFilter) {
+    void init(int n, int q, vector<event> events, vector<int> queryFilter) {
         this->n = n, this->q = q; this->queryFilter = queryFilter;
-        initDsu(n); stree = vvpii(4 * q); answers = vi(q);
+        initDsu(n); stree = vector<vector<pair<int, int>>>(4 * q); answers = vector<int>(q);
 
-        map<pii, int> addTime;
-        rep(i, events.size()) {
+        map<pair<int, int>, int> addTime;
+        for (int i = 0; i < (int) events.size(); ++i) {
             auto [tp, a, b, t] = events[i];
             if (a > b) swap(a, b);
 
@@ -264,58 +87,58 @@ struct DynConn {
     }
 
     void init(int n, int q, vector<event> events) {
-        vi queryFilter(q);
+        vector<int> queryFilter(q);
         iota(queryFilter.begin(), queryFilter.end(), 0);
         init(n, q, events, queryFilter);
     }
 
-    void init(int n, int q, vector<addEdges> edges, vi queryFilter) {
+    void init(int n, int q, vector<addEdges> edges, vector<int> queryFilter) {
         this->n = n, this->q = q; this->queryFilter = queryFilter;
-        initDsu(n); stree = vvpii(4 * q); answers = vi(q);
+        initDsu(n); stree = vector<vector<pair<int, int>>>(4 * q); answers = vector<int>(q);
         for (auto &[a, b, l, r]: edges) add(l, r, a, b);
     }
 
     void init(int n, int q, vector<addEdges> edges) {
-        vi queryFilter(q);
+        vector<int> queryFilter(q);
         iota(queryFilter.begin(), queryFilter.end(), 0);
         init(n, q, edges, queryFilter);
     }
 
     void run() { dfs(); }
 
-    vi getResults() {
-        vi fin;
-        rep(i ,queryFilter.size()) fin.push_back(answers[queryFilter[i]]);
+    vector<int> getResults() {
+        vector<int> fin;
+        for (int i = 0; i < (int) queryFilter.size(); ++i) fin.push_back(answers[queryFilter[i]]);
         return fin;
     }
 };
 
-vector<addEdges> toAddEdges(vpii &edges, vvpii &times, int m) {
-    vector<addEdges> events;
-    rep(i, edges.size()) rep(j, times[i].size()) {
-        events.push_back({edges[i].first, edges[i].second, times[i][j].first, times[i][j].second});
-    }
-    return events;
+vector<addEdges> toAddEdges(vector<pair<int, int>> &edges, vector<vector<pair<int, int>>> &times, int m) {
+vector<addEdges> events;
+for (int i = 0; i < (int) edges.size(); ++i) for (int j = 0; j < (int) times[i].size(); ++j) {
+events.push_back({edges[i].first, edges[i].second, times[i][j].first, times[i][j].second});
+}
+return events;
 }
 
 signed main() {
     ifstream cin("disconnected.in"); ofstream cout("disconnected.out");
-    IO;
+    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
     int n, m; cin >> n >> m;
-    vpii edges(m);
-    rep(i, m) {
+    vector<pair<int, int>> edges(m);
+    for (int i = 0; i < m; ++i) {
         int a, b; cin >> a >> b; --a, --b;
         edges[i] = {a, b};
     }
 
     int k; cin >> k;
-    vvpii times(m);
-    rep(i, m) times[i].push_back({0, k});
+    vector<vector<pair<int, int>>> times(m);
+    for (int i = 0; i < m; ++i) times[i].push_back({0, k});
 
-    reps(i, 1, k + 1) {
+    for (int i = 1; i <= k; ++i) {
         int sz; cin >> sz;
-        rep(j, sz) {
+        for (int j = 0; j < sz; ++j) {
             int x; cin >> x; --x;
             auto [l, r] = times[x].back(); times[x].pop_back();
             times[x].push_back({l, i - 1}); times[x].push_back({i + 1, k});
@@ -327,36 +150,10 @@ signed main() {
     DynConn dc = DynConn();
     dc.init(n, k + 1, aE);
     dc.run();
-    vi ans = dc.getResults();
+    vector<int> ans = dc.getResults();
 
-    reps(i, 1, k + 1) {
+    for (int i = 1; i <= k; ++i) {
         if (ans[i] > 1) cout << "Disconnected" << endl;
         else cout << "Connected" << endl;
     }
-}
-
-signed main2() {
-    ifstream cin("connect.in"); ofstream cout("connect.out");
-    IO;
-
-    int n, q; cin >> n >> q;
-    if (!q) return 0;
-    vector<event> events;
-    vi queryFilter;
-    rep(i, q) {
-        char c; int a, b;
-        cin >> c;
-        if (c == '?') queryFilter.push_back(i);
-        else {
-            cin >> a >> b; --a, --b;
-            events.push_back({c == '+' ? 1 : 2, a, b, i});
-        }
-    }
-
-    DynConn dc = DynConn();
-    dc.init(n, q, events, queryFilter);
-    dc.run();
-
-    vi rs = dc.getResults();
-    rep(i, rs.size()) cout << rs[i] << "\n";
 }
