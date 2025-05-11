@@ -36,7 +36,7 @@ template<typename R> struct MO {
     MoOps<R> &ops;
 
     MO(vector<query> const &qu, MoOps<R> &moOps, int BLOCKSZ = 450) : ops(moOps) {
-        queries = qu, ans = vector<int>(qu.size());
+        queries = qu, ans = vector<R>(qu.size());
         std::sort(queries.begin(), queries.end(), [&](query &q1, query &q2) {
             return make_pair(q1.l / BLOCKSZ, q1.r) < make_pair(q2.l / BLOCKSZ, q2.r);
         });
