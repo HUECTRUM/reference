@@ -248,17 +248,19 @@ using namespace atcoder;
 
 using Mint = modint1000000007;
 
-template<int N = 1000000>
+template<int N = 1000010>
 struct BinomMod {
-    static const int MAXN = N;
-    vector<Mint> fact;
+    vector<Mint> fact, invFact;
 
-    BinomMod() : fact(N + 1) {
+    BinomMod() : fact(N + 1), invFact(N + 1) {
         fact[0] = fact[1] = 1;
-        for (int i = 2; i <= MAXN; ++i) fact[i] = fact[i - 1] * i;
+        for (int i = 2; i <= N; ++i) fact[i] = fact[i - 1] * i;
+
+        invFact[N] = 1 / fact[N];
+        for (int i = N; i > 0; --i) invFact[i - 1] = invFact[i] * i;
     }
 
     Mint binom(int n, int k) {
-        return (k > n ? 0 : fact[n] / (fact[k] * fact[n - k]));
+        return (k > n ? 0 : fact[n] * invFact[k] * invFact[n - k]);
     }
 };
