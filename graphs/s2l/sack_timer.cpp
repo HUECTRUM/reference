@@ -35,7 +35,7 @@ struct UniqueOps: s2lContainer<int> {
     int getResult(int v) { return uCnt; }
 };
 
-template<typename R, int N = 200000> struct Sack {
+template<typename R> struct Sack {
     s2lContainer<R> &ds;
     int n;
     const vector<vector<int>> &g;

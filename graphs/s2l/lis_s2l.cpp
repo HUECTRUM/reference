@@ -59,9 +59,9 @@ template<typename R, typename D, class Bucket> struct S2L {
     const vector<D>& val;
     vector<int> sz;
     vector<R> ans;
-    vector<Bucket*> rep;
+    vector<Bucket*> buckets;
 
-    S2L(const vector<vector<int>>& g, const vector<D>& val): n(g.size()), g(g), val(val), sz(n, 1), rep(n), ans(n) { }
+    S2L(const vector<vector<int>>& g, const vector<D>& val): n(g.size()), g(g), val(val), sz(n, 1), buckets(n), ans(n) { }
 
     void dfsSz(int v, int p = -1) {
         for (int u: g[v]) if (u != p) dfsSz(u, v), sz[v] += sz[u];
@@ -74,14 +74,14 @@ template<typename R, typename D, class Bucket> struct S2L {
 
         for (int u : g[v]) if (u != p && u != big) dfs(u, v);
 
-        if (big != -1) dfs(big, v), rep[v] = rep[big];
-        else rep[v] = new Bucket();
+        if (big != -1) dfs(big, v), buckets[v] = buckets[big];
+        else buckets[v] = new Bucket();
 
-        rep[v]->addVertex(v, val[v]);
+        buckets[v]->addVertex(v, val[v]);
 
-        for (int u : g[v]) if (u != p && u != big) rep[v]->merge(u, *rep[u], v, val[v]);
+        for (int u : g[v]) if (u != p && u != big) buckets[v]->merge(u, *buckets[u], v, val[v]);
 
-        ans[v] = rep[v]->getResult(v);
+        ans[v] = buckets[v]->getResult(v);
     }
 
     vector<R> run(int root = 0) {
